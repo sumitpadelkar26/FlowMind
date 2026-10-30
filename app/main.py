@@ -1,4 +1,5 @@
 import time
+import os
 import re
 import csv
 from io import StringIO
@@ -31,6 +32,11 @@ CLOSED = ("done", "dropped")
 # ------------------------------------------------------------------ startup
 @app.on_event("startup")
 def on_startup():
+    if os.getenv("VERCEL"):
+        if settings.database_url.startswith("sqlite"):
+            raise RuntimeError("Configure DATABASE_URL with a hosted PostgreSQL database on Vercel; local SQLite files are not durable there.")
+        if not settings.auth_secret:
+            raise RuntimeError("Configure AUTH_SECRET in Vercel Environment Variables so sessions work across function instances.")
     Base.metadata.create_all(bind=engine)
     upgrade_existing_database(engine)
     if settings.seed_on_start:

@@ -60,9 +60,13 @@ The first visitor sees **Create your admin account**; this creates the initial w
 
 Set `AUTH_SECRET` in `.env` to a long random value so sessions survive app restarts. Set `AUTH_COOKIE_SECURE=true` when serving over HTTPS. The local setup uses a generated secret in `.env`; do not commit that file. This is a single-workspace role model, not per-record or multi-tenant authorization.
 
+### Vercel deployment
+
+Commit `.python-version` with a supported minor version such as `3.12`. In the Vercel project settings, add `DATABASE_URL` pointing to hosted PostgreSQL (for example Neon), `AUTH_SECRET` set to a long random value, `AUTH_COOKIE_SECURE=true`, and `AI_API_KEY` if Gemini features are needed. `.env` is local-only and is not deployed. Vercel functions use a read-only filesystem except for temporary scratch storage, so the app writes logs to platform-captured stdout there and refuses to use SQLite for persistent application data. Redeploy after changing environment variables.
+
 ## Logging
 
-- `app/logger.py`: stdlib `logging`, one JSON object per line, to `logs/app.log` (rotating, 2 MB × 5) **and** the console. Levels via `LOG_LEVEL`.
+- `app/logger.py`: stdlib `logging`, one JSON object per line, to `logs/app.log` (rotating, 2 MB × 5) **and** the console locally. On Vercel, logs go to stdout because function filesystems are read-only. Levels via `LOG_LEVEL`.
 - A middleware assigns a **correlation ID** per request (or honours an incoming `X-Request-ID`), stores it in a `ContextVar`, stamps it on every log line, and returns it in the `X-Request-ID` response header and in every error body.
 - Key events: `meeting_created`, `meeting_notes_uploaded`, `action_item_created`, `action_item_reassigned`, `bulk_reassigned`, `action_item_closed`, `items_carried_forward`, `recap_applied`, `kb_linked`, `kb_rag_answered`, `readiness_scored`, `request` (method, path, status, duration).
 - AI calls: `ai_call` per attempt with `task`, `model`, `attempt`, `latency_ms`, `outcome`, `error`; `ai_fallback_used` when degraded. Prompts and notes are **never** logged (only their length).

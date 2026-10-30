@@ -55,13 +55,18 @@ def setup_logging() -> None:
     root = logging.getLogger()
     if getattr(root, "_configured", False):
         return
-    os.makedirs(os.path.dirname(settings.log_file) or ".", exist_ok=True)
     fmt = JsonFormatter()
-    file_h = RotatingFileHandler(settings.log_file, maxBytes=2_000_000, backupCount=5, encoding="utf-8")
-    file_h.setFormatter(fmt)
     console = logging.StreamHandler()
     console.setFormatter(fmt)
-    root.handlers = [file_h, console]
+    # Vercel's function bundle is read-only. Its platform captures stdout/stderr,
+    # so use console logging there and retain rotating local files for development.
+    if os.getenv("VERCEL"):
+        root.handlers = [console]
+    else:
+        os.makedirs(os.path.dirname(settings.log_file) or ".", exist_ok=True)
+        file_h = RotatingFileHandler(settings.log_file, maxBytes=2_000_000, backupCount=5, encoding="utf-8")
+        file_h.setFormatter(fmt)
+        root.handlers = [file_h, console]
     root.setLevel(settings.log_level)
     for noisy in ("httpx", "httpcore", "uvicorn.access"):
         logging.getLogger(noisy).setLevel(logging.WARNING)
