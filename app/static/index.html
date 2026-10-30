@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FlowMind - never lose context between meetings</title>
+  <meta name="description" content="AI-powered meeting recaps, handovers and action-item follow-up.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%9D%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><div class="orb o1" style="--k:-1.2"></div><div class="orb o2" style="--k:1.6"></div><div class="orb o3" style="--k:-.8"></div></div>
+  <div class="app">
+    <aside class="side glass" aria-label="Primary">
+      <div class="brand"><span class="logo" id="logo"></span>FlowMind</div>
+      <nav class="nav" id="nav"></nav>
+      <div class="spacer"></div>
+      <div class="ai-chip" id="aiChip"><span class="dot"></span><span>Checking AI…</span></div>
+      <div class="account-box" id="accountBox"></div>
+      <button class="theme" id="themeBtn" type="button" aria-label="Toggle light and dark mode"></button>
+    </aside>
+    <main><div id="view" aria-live="polite"></div></main>
+  </div>
+  <div id="auth" class="auth-gate" hidden></div>
+  <div id="sheets"></div>
+  <div class="toasts" id="toasts" role="status"></div>
+  <noscript><p style="padding:2rem">FlowMind needs JavaScript to run.</p></noscript>
+  <script src="/static/app.js"></script>
+</body>
+</html>
