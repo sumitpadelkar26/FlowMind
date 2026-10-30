@@ -5,3 +5,5 @@ venv/
 logs/
 __pycache__/
 *.pyc
+.neon
+node_modules/

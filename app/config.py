@@ -18,9 +18,12 @@ class Settings:
     auth_cookie_secure: bool = os.getenv("AUTH_COOKIE_SECURE", "false").lower() == "true"
 
     def __init__(self):
-        # Render/Heroku style URLs use postgres:// which SQLAlchemy rejects
+        # Keep the URL compatible with the psycopg2 driver in requirements.txt.
+        # SQLAlchemy 2.1 otherwise defaults postgresql:// to psycopg (v3).
         if self.database_url.startswith("postgres://"):
-            self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
+            self.database_url = self.database_url.replace("postgres://", "postgresql+psycopg2://", 1)
+        elif self.database_url.startswith("postgresql://"):
+            self.database_url = self.database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 
 settings = Settings()
